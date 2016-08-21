@@ -1,3 +1,4 @@
+<!-- It's RESPONSIVE TOO! -->
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -7,6 +8,9 @@
 		<meta name="author" content="https://github.com/portapipe/Login-GroceryCrud" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<style>
+			.modal-footer {   border-top: 0px; }
+		</style>
 	</head>
 	<body>
 	<!--login form-->
@@ -30,6 +34,11 @@
 	              <span class="pull-right"><?php if(isset($error)) echo "<b><span style='color:red;'>$error</span></b>"; ?></span>
 	            </div>
 	          </form>
+	      </div>
+	      <div class="modal-footer ">
+	          <div class="col-md-12">
+	          <button class="btn hidden" data-dismiss="modal" aria-hidden="true">&nbsp;</button>
+			  </div>	
 	      </div>
 	  </div>
 	  </div>
