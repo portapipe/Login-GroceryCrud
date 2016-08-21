@@ -2,6 +2,11 @@
 A Login/Logout system for GroceryCrud (codeigniter).
 
 ### Requirement
+- Table 'crud_users'
+- - field 'username'
+- - field 'password'
+- - optional field 'permissions'
+
 Create a table in your mysql named "crud_users" with "username" and "password" fields.
 If you want you can create a "permissions" field too, that can be used to get a value that will filter your crud tables based on that value, but you must create the system by yourself (I'll probably create an example for that).
 
