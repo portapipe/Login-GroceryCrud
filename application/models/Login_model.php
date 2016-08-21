@@ -13,10 +13,10 @@ class Login_model  extends CI_Model  {
 	
 	/* CHECK LOGIN, return BOOL */
 	public function isLogged(){
-		if($this->session->userdata('loginStatus')){
-			return true;
+		if(null !== $this->session->userdata('loginStatus')){
+			return 1;
 		}
-		return false;
+		return 0;
 	}
 	
 	/* RETURN PERMISSION FIELD (the one you save into the session, if no permission was set so the username is returned */
