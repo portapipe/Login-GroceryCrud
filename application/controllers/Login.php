@@ -1,22 +1,30 @@
 <?php
 $loginConfig = array(
 	"Page After Login" => "/",
-	"Error Message" => ""
+	"Error Message" => "Your Username or Password are incorrect!",
+	"Use MD5 Encryption" => false
 );
 
-class Login extends Controller {
+/* INSTRUCTIONS? GO TO https://github.com/portapipe/Login-GroceryCrud */
+/* Login-GroceryCrud by portapipe */
+class Login extends CI_Controller {
 
-	function login() {
-		parent::Controller();
+
+	public function __construct(){
+		parent::__construct();	
+		$this->load->database();
 		$this->load->helper('form');
 		$this->load->helper('url');
 		$this->load->library('form_validation');
 		$this->load->library('session');
+		$this->load->model('login_model');
 	}
 
 	/* LOGIN PAGE */
 	function index() {
-		$this->load->view('loginPage');
+		global $loginConfig;
+		if($this->login_model->isLogged()) redirect($loginConfig['Page After Login']);
+		$this->load->view('login.php');
 	}
 	
 	/* LOGIN PROCESS */
@@ -25,23 +33,24 @@ class Login extends Controller {
 		
 		$username = $this->input->post('username');
 		$password = $this->input->post('password');
-		$passwordMD5 = md5($password);
-		$query = $this->db->query("SELECT * FROM crud_users WHERE username='$username' AND password='$passwordMD5'");
+		if($loginConfig['Use MD5 Encryption']) $password = md5($password);
+		
+		$query = $this->db->query("SELECT * FROM crud_users WHERE username='$username' AND password='$password'");
 		if ($query->num_rows() == 1) {
 			$name = $query->row()->username;
-			$permissions = $query->row()->permissions."";
-			$this->session->set_userdata('username',($permissions!=""?$permissions:$name));
+			$permissions = (isset($query->row()->permissions)?$query->row()->permissions:"");
+			$this->session->set_userdata('loginStatus',($permissions!=""?$permissions:$name));
 			redirect($loginConfig['Page After Login']);
 		}else{
 			/* ERROR PART */
 			$data['error']= $loginConfig['Error Message'];
-			$this->load->view('loginPage', $data);
+			$this->load->view('login.php', $data);
 		}
 	}
 
 	/* LOGOUT */
 	function logout() {
-		$this->session->sess_destroy();
+		$this->login_model->logout();
 		redirect("/login");
 	}
 }
