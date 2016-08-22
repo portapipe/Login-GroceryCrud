@@ -45,7 +45,7 @@ class Login extends CI_Controller {
 		if ($query->num_rows() == 1) {
 			$name = $query->row()->username;
 			$permissions = (isset($query->row()->permissions)?$query->row()->permissions:"");
-			$data = json_encode(array("id"=>$this->row()->id,"permissions"=>$this->row()->permissions,"username"=>$this->row()->username));
+			$data = json_encode(array("id"=>$query->row()->id,"permissions"=>$query->row()->permissions,"username"=>$query->row()->username));
 			$this->session->set_userdata('loginStatus',$data);
 			redirect($loginConfig['Page After Login']);
 		}else{
