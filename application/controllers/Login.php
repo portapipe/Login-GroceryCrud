@@ -24,7 +24,13 @@ class Login extends CI_Controller {
 	function index() {
 		global $loginConfig;
 		if($this->login_model->isLogged()) redirect($loginConfig['Page After Login']);
-		$this->load->view('login.php');
+		if ($this->db->table_exists('crud_users')){
+			$this->load->view('login.php');
+		}else{
+			echo "SYSTEM REQUIREMENT: SQL TABLE crud_users DOESN'T EXISTS BUT... Hey, we can do it for you, if the database connection is configured correctly ;)<p><a href=\"".base_url()."login/createDBTable\"><button>Create the required table in your MySQL database</button></a></p>Oh, a user 'admin' (password 'admin') will be create too, so you can log in directly! Just click on the button!";
+			echo "<p><br/><i>...this is a one-time-only step!</i></p>";
+		}
+
 	}
 	
 	/* LOGIN PROCESS */
@@ -52,6 +58,22 @@ class Login extends CI_Controller {
 	function logout() {
 		$this->login_model->logout();
 		redirect("/login");
+	}
+	
+	function createDBTable(){
+		if ($this->db->table_exists('crud_users')){
+		    redirect(base_url()."login");
+		}else{
+			$this->db->query("CREATE TABLE crud_users (
+				id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
+				username VARCHAR(70) NOT NULL,
+				password VARCHAR(70) NOT NULL,
+				permissions VARCHAR(255)
+			)");
+			$this->db->query("INSERT INTO crud_users (username,password,permissions) VALUES ('admin','admin','admin')");
+			echo "The table 'crud_users' was successfully created!<br/>An admin user was created too. Login with:<br/>- username 'admin'<br/>- password 'admin'<br/>AND DON'T FORGET TO DELETE THIS USER! IS YOUR RESPONSIBILITY!<br/>Really, delete it as soon as you can (or at least change the password)!";
+			echo '<p><a href="'.base_url().'login"><button>Go to the Login Page</button></a></p>'; 
+		}
 	}
 }
 ?>
