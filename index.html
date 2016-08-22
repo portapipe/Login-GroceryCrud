@@ -24,6 +24,11 @@
 
 <p>A Login/Logout system for any CodeIgniter project (like GroceryCrud that don't need public user registration).</p>
 
+<blockquote>
+<p>There are some tips and code strips into the <a href="https://github.com/portapipe/Login-GroceryCrud/wiki">WIKI</a> so read it!
+There is the <a href="https://portapipe.github.io/Login-GroceryCrud/">Official Website</a> too!</p>
+</blockquote>
+
 <h3>
 <a id="requirement" class="anchor" href="#requirement" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirement</h3>
 
@@ -32,13 +37,10 @@
 <li>CodeIgniter</li>
 </ul>
 
-<p>It use an SQL table named "crud_users" with "username","password" and "permissions" fields. It will be created automagically if doesn't exists AND an admin user will be created too, so you can log in immediately!
-The "permissions" field can store anything (VARCHAR 255) like a json_encode() array or just a keyword or a number, so you can manage the permissions of that user.</p>
-
 <h3>
 <a id="how-to-install" class="anchor" href="#how-to-install" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to "Install"</h3>
 
-<p>There are 3 files:</p>
+<p>There are 3 files that you need to drag into your project:</p>
 
 <ul>
 <li>application/controllers/Login.php</li>
@@ -46,11 +48,20 @@ The "permissions" field can store anything (VARCHAR 255) like a json_encode() ar
 <li>application/views/login.php</li>
 </ul>
 
+<h3>
+<a id="configure-it-optional" class="anchor" href="#configure-it-optional" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configure it (optional)</h3>
+
 <p>You can edit the views/login.php as you wish (but if you leave as is it's out-of-the-box responsive and working)
 -AND-
-you can look into the controllers/login.php file because on the top of the file there are a couple of configuration (and translations) than you can manage easily.</p>
+you can look into the controllers/Login.php file because on the top of the file there are a couple of configuration (and translations) than you can manage easily.</p>
 
 <p>That's it.</p>
+
+<h3>
+<a id="how-it-works" class="anchor" href="#how-it-works" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How it works</h3>
+
+<p>It use an SQL table named "crud_users" with "username","password" and "permissions" fields. It will be created automagically if doesn't exists AND an admin user will be created too, so you can log in immediately!
+The "permissions" field can store anything (VARCHAR 255) like a json_encode() array or just a keyword or a number, so you can manage the permissions of that user.</p>
 
 <h3>
 <a id="users-management---the-code" class="anchor" href="#users-management---the-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Users Management - The Code</h3>
@@ -74,18 +85,16 @@ you can look into the controllers/login.php file because on the top of the file 
 
 <p>TO USE IT you just need to load the library into your controllers files like that:</p>
 
-<pre><code>$this-&gt;load-&gt;model("Login_model");
-</code></pre>
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">load</span><span class="pl-k">-&gt;</span>model(<span class="pl-s"><span class="pl-pds">"</span>Login_model<span class="pl-pds">"</span></span>);</span></pre></div>
 
 <p>and use it like:</p>
 
-<pre><code>if($this-&gt;login_model-&gt;isLogged()){
-    $name = $this-&gt;login_model-&gt;name();
-    echo "HI $name! You are Logged IN!";
-}else{
-    redirect("/login");
-}
-</code></pre>
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-k">if</span>(<span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">login_model</span><span class="pl-k">-&gt;</span>isLogged()){</span>
+<span class="pl-s1">    <span class="pl-smi">$name</span> <span class="pl-k">=</span> <span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">login_model</span><span class="pl-k">-&gt;</span>name();</span>
+<span class="pl-s1">    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>HI <span class="pl-smi">$name</span>! You are Logged IN!<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1">}<span class="pl-k">else</span>{</span>
+<span class="pl-s1">    redirect(<span class="pl-s"><span class="pl-pds">"</span>/login<span class="pl-pds">"</span></span>);</span>
+<span class="pl-s1">}</span></pre></div>
 
 <p>Pretty easy, uh?</p>
 
@@ -102,28 +111,29 @@ The "author" users can add and see their own articles, so we must show them just
 We can use a <code>$crud-&gt;where('author',$this-&gt;login_model-&gt;id())</code> and force the field 'author' in the add page to be the author's ID and non-editable by the user.
 Finally the "revisioner" users can edit and delete any articles BUT can't add a new one, so we can unset the add button with <code>$crud-&gt;unset_add()</code> and we are done.</p>
 
-<pre><code>$permission = $this-&gt;login_model-&gt;permission();
-if($permission=="admin"){
-    echo "Hey, you're the boss, you can do anything!";
-}
-
-if($permission=="author"){
-    $crud-&gt;where('author',$this-&gt;login_model-&gt;id());
-    $crud-&gt;callback_before_insert(array($this,'useAuthorID'));
-}
-function useAuthorID($post_array) {
-    $post_array['author'] = $this-&gt;login_model-&gt;id();
-    return $post_array;
-}   
-
-if($permission=="revisioner"){
-    $crud-&gt;unset_add();
-}
-
-if($permission==""){
-    echo "I think you shouldn't be here...";
-}
-</code></pre>
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$permission</span> <span class="pl-k">=</span> <span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">login_model</span><span class="pl-k">-&gt;</span>permission();</span>
+<span class="pl-s1"><span class="pl-k">if</span>(<span class="pl-smi">$permission</span><span class="pl-k">==</span><span class="pl-s"><span class="pl-pds">"</span>admin<span class="pl-pds">"</span></span>){</span>
+<span class="pl-s1">    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Hey, you're the boss, you can do anything!<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">if</span>(<span class="pl-smi">$permission</span><span class="pl-k">==</span><span class="pl-s"><span class="pl-pds">"</span>author<span class="pl-pds">"</span></span>){</span>
+<span class="pl-s1">    <span class="pl-smi">$crud</span><span class="pl-k">-&gt;</span>where(<span class="pl-s"><span class="pl-pds">'</span>author<span class="pl-pds">'</span></span>,<span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">login_model</span><span class="pl-k">-&gt;</span>id());</span>
+<span class="pl-s1">    <span class="pl-smi">$crud</span><span class="pl-k">-&gt;</span>callback_before_insert(<span class="pl-c1">array</span>(<span class="pl-smi">$this</span>,<span class="pl-s"><span class="pl-pds">'</span>useAuthorID<span class="pl-pds">'</span></span>));</span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"><span class="pl-k">function</span> <span class="pl-en">useAuthorID</span>(<span class="pl-smi">$post_array</span>) {</span>
+<span class="pl-s1">    <span class="pl-smi">$post_array</span>[<span class="pl-s"><span class="pl-pds">'</span>author<span class="pl-pds">'</span></span>] <span class="pl-k">=</span> <span class="pl-smi">$this</span><span class="pl-k">-&gt;</span><span class="pl-smi">login_model</span><span class="pl-k">-&gt;</span>id();</span>
+<span class="pl-s1">    <span class="pl-k">return</span> <span class="pl-smi">$post_array</span>;</span>
+<span class="pl-s1">}   </span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">if</span>(<span class="pl-smi">$permission</span><span class="pl-k">==</span><span class="pl-s"><span class="pl-pds">"</span>revisioner<span class="pl-pds">"</span></span>){</span>
+<span class="pl-s1">    <span class="pl-smi">$crud</span><span class="pl-k">-&gt;</span>unset_add();</span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">if</span>(<span class="pl-smi">$permission</span><span class="pl-k">==</span><span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>){</span>
+<span class="pl-s1">    <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>I think you shouldn't be here...<span class="pl-pds">"</span></span>;</span>
+<span class="pl-s1">    <span class="pl-c">//and we can force a login to the user with</span></span>
+<span class="pl-s1">    <span class="pl-c">//$this-&gt;login_model-&gt;logout();</span></span>
+<span class="pl-s1">}</span></pre></div>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/portapipe/Login-GroceryCrud">Login-grocerycrud</a> is maintained by <a href="https://github.com/portapipe">portapipe</a>.</span>
