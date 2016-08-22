@@ -21,7 +21,8 @@ class Login_model  extends CI_Model  {
 	
 	/* RETURN PERMISSION FIELD (the one you save into the session, if no permission was set so the username is returned */
 	public function permission(){
-		return $this->session->userdata('loginStatus');
+		$data = json_decode($this->session->userdata('loginStatus'));
+		return $data->permissions;
 	}
 	public function permissions(){
 		return $this->permission();
@@ -33,11 +34,23 @@ class Login_model  extends CI_Model  {
 		return $this->permission();
 	}
 	
-
+	public function id(){
+		$data = json_decode($this->session->userdata('loginStatus'));
+		return $data->id;
+	}
+	public function name(){
+		$data = json_decode($this->session->userdata('loginStatus'));
+		return $data->username;
+	}
+	public function username(){
+		return $this->name();
+	}
+	
+	
 	/* LOGOUT */
-	public function logout(){
+	public function logout($redirect=true){
 		$this->session->sess_destroy();
-		redirect("/login");
+		if($redirect) redirect("/login");
 	}
 
 
