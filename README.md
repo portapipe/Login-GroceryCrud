@@ -20,6 +20,9 @@ you can look into the controllers/login.php file because on the top of the file 
 
 That's it.
 
+### Users Management - The Code
+Here it is the code on how to manage the users in your admin panel:
+https://github.com/portapipe/Login-GroceryCrud/wiki/Manage-the-users
 
 ### Advanced tools
 A model file comes with the release and contains some basics stuff:
