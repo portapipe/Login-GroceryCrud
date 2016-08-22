@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Login-grocerycrud by portapipe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Login-grocerycrud</h1>
+      <h2 class="project-tagline">A Login/Logout system for GroceryCrud (codeigniter).</h2>
+      <a href="https://github.com/portapipe/Login-GroceryCrud" class="btn">View on GitHub</a>
+      <a href="https://github.com/portapipe/Login-GroceryCrud/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/portapipe/Login-GroceryCrud/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="login-grocerycrud" class="anchor" href="#login-grocerycrud" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Login-GroceryCrud</h1>
+
+<p>A Login/Logout system for any CodeIgniter project (like GroceryCrud that don't need public user registration).</p>
+
+<h3>
+<a id="requirement" class="anchor" href="#requirement" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirement</h3>
+
+<ul>
+<li>MySQL</li>
+<li>CodeIgniter</li>
+</ul>
+
+<p>It use an SQL table named "crud_users" with "username","password" and "permissions" fields. It will be created automagically if doesn't exists AND an admin user will be created too, so you can log in immediately!
+The "permissions" field can store anything (VARCHAR 255) like a json_encode() array or just a keyword or a number, so you can manage the permissions of that user.</p>
+
+<h3>
+<a id="how-to-install" class="anchor" href="#how-to-install" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to "Install"</h3>
+
+<p>There are 3 files:</p>
+
+<ul>
+<li>application/controllers/Login.php</li>
+<li>application/models/Login_model.php</li>
+<li>application/views/login.php</li>
+</ul>
+
+<p>You can edit the views/login.php as you wish (but if you leave as is it's out-of-the-box responsive and working)
+-AND-
+you can look into the controllers/login.php file because on the top of the file there are a couple of configuration (and translations) than you can manage easily.</p>
+
+<p>That's it.</p>
+
+<h3>
+<a id="advanced-tools" class="anchor" href="#advanced-tools" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Advanced tools</h3>
+
+<p>A model file comes with the release and contains some basics stuff:</p>
+
+<ul>
+<li>isLogged() - Return true if the player is logged, false if is not (here you can add a redirect("/login") )</li>
+<li>logout(redirect=true) - log out the user and make an instant redirect to the login page (pass 'false' as argument to not redirect)</li>
+<li>permission() - return the user's permission field of the database or the username if the permission field doesn't exists</li>
+<li>permissions(), getPermission() and getPermissions() are aliases of permission()</li>
+<li>id() - return the user-id of the logged user</li>
+<li>name() username() - return the username of the user</li>
+</ul>
+
+<p>TO USE IT you just need to load the library into your controllers files like that:</p>
+
+<pre><code>$this-&gt;load-&gt;model("Login_model");
+</code></pre>
+
+<p>and use it like:</p>
+
+<pre><code>if($this-&gt;login_model-&gt;isLogged()){
+    $name = $this-&gt;login_model-&gt;name();
+    echo "HI $name! You are Logged IN!";
+}else{
+    redirect("/login");
+}
+</code></pre>
+
+<p>Pretty easy, uh?</p>
+
+<h3>
+<a id="example-permissions-for-grocerycrud" class="anchor" href="#example-permissions-for-grocerycrud" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example: Permissions for GroceryCrud</h3>
+
+<h5>
+<a id="note-im-using-some-names-like-admin-or-author-for-the-example-but-you-can-use-really-anything-you-want" class="anchor" href="#note-im-using-some-names-like-admin-or-author-for-the-example-but-you-can-use-really-anything-you-want" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Note: I'm using some names like 'admin' or 'author' for the example but you can use really anything you want!</h5>
+
+<p>In this example you have a blog website. You need an "admin" user, an "author" user and a "revisioner" user.</p>
+
+<p>The "admin" users will have any permission, so create the basic CRUD page with any permission you want to give them, like the ability to manage any user.
+The "author" users can add and see their own articles, so we must show them just their work.
+We can use a <code>$crud-&gt;where('author',$this-&gt;login_model-&gt;id())</code> and force the field 'author' in the add page to be the author's ID and non-editable by the user.
+Finally the "revisioner" users can edit and delete any articles BUT can't add a new one, so we can unset the add button with <code>$crud-&gt;unset_add()</code> and we are done.</p>
+
+<pre><code>$permission = $this-&gt;login_model-&gt;permission();
+if($permission=="admin"){
+    echo "Hey, you're the boss, you can do anything!";
+}
+
+if($permission=="author"){
+    $crud-&gt;where('author',$this-&gt;login_model-&gt;id());
+    $crud-&gt;callback_before_insert(array($this,'useAuthorID'));
+}
+function useAuthorID($post_array) {
+    $post_array['author'] = $this-&gt;login_model-&gt;id();
+    return $post_array;
+}   
+
+if($permission=="revisioner"){
+    $crud-&gt;unset_add();
+}
+
+if($permission==""){
+    echo "I think you shouldn't be here...";
+}
+</code></pre>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/portapipe/Login-GroceryCrud">Login-grocerycrud</a> is maintained by <a href="https://github.com/portapipe">portapipe</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
