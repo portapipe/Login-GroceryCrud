@@ -2,7 +2,8 @@
 $loginConfig = array(
 	"Page After Login" => "/",
 	"Error Message" => "Your Username or Password are incorrect!",
-	"Use MD5 Encryption" => false
+	"Use MD5 Encryption" => false,
+	"Show Permission Management Tips" => true, //suggested
 );
 
 /* INSTRUCTIONS? GO TO https://github.com/portapipe/Login-GroceryCrud */
@@ -109,6 +110,7 @@ class Login extends CI_Controller {
 			*/
 			$dati = array("crud_permissions"=>"111111","crud_users"=>"111111");
 			$this->db->query("INSERT INTO crud_permissions (name,permissions) VALUES ('admin','".json_encode($dati)."')");
+			redirect($this->uri->uri_string());
 			
 		}
 	}
@@ -123,7 +125,7 @@ class Login extends CI_Controller {
 		$crud = new grocery_CRUD();
 		$crud->set_theme("bootstrap");
 		$crud->set_table('crud_permissions');
-		$crud->set_subject('User Permission');
+		$crud->set_subject('Permission Management');
 		$crud->required_fields('name');
         $crud->columns('name');
 
@@ -147,14 +149,13 @@ class Login extends CI_Controller {
 				<script src="<?php echo $file; ?>"></script>
 			<?php endforeach; ?>
 			<style>
-			.checkbox-grid li {
-			    display: block;
-			    float: left;
-			    width: 14.285714286%;
+			.checkbox-grid, th, td {
 			    border: 1px solid rgba(0, 0, 0, 0.49);
-			    padding: 5px;
-			    text-align: center;
-			    height: 30px;
+				text-align: center;
+				padding: 5px !important;
+			}
+			.checkbox-grid{
+				width: 100%;
 			}
 			</style>
 			</head>
@@ -167,43 +168,52 @@ class Login extends CI_Controller {
 	
 	function create_permissions_grid($value='', $primary_key = null){
 		$perm = json_decode($value,true);
-		$return = '<ul class="checkbox-grid">';
+		$return = '<table class="checkbox-grid">';
 		$arr = array("ID Only","Read List","Read Single","Add New","Edit","Delete");
 		$tables = $this->db->list_tables();
 
 		//ID
 		$return .= '
-		<li>Tables</li>
+		<tr><th>Tables</th>
 		';
 		foreach($arr as $a){
 			$return .= '
-			<li>'.$a.'</li>
+			<th>'.$a.'</th>
 			';
 		}
+		$return .= '</tr>';
 		foreach($tables as $a){
-		$return .= '
-	    <li>'.$a.'</li>
+		$return .= '<tr>
+	    <td>'.$a.'</td>
 	    ';
 		$return .= '
-	    <li><input type="checkbox" name="'.$a.'[1]" value="0" '.($this->login_model->IDOnly($a,$perm)?'checked':'').'/></li>
+	    <td><input type="checkbox" name="'.$a.'[1]" value="0" '.($this->login_model->IDOnly($a,$perm)?'checked':'').'/></td>
 	    ';
 		$return .= '
-	    <li><input type="checkbox" name="'.$a.'[2]" value="1" '.($this->login_model->canSeeList($a,$perm)?'checked':'').'/></li>
+	    <td><input type="checkbox" name="'.$a.'[2]" value="1" '.($this->login_model->canSeeList($a,$perm)?'checked':'').'/></td>
 	    ';
 		$return .= '
-	    <li><input type="checkbox" name="'.$a.'[3]" value="1" '.($this->login_model->canSeeSingle($a,$perm)?'checked':'').'/></li>
+	    <td><input type="checkbox" name="'.$a.'[3]" value="1" '.($this->login_model->canSeeSingle($a,$perm)?'checked':'').'/></td>
 	    ';
 		$return .= '
-	    <li><input type="checkbox" name="'.$a.'[4]" value="1" '.($this->login_model->canAdd($a,$perm)?'checked':'').'/></li>
+	    <td><input type="checkbox" name="'.$a.'[4]" value="1" '.($this->login_model->canAdd($a,$perm)?'checked':'').'/></td>
 	    ';
 		$return .= '
-	    <li><input type="checkbox" name="'.$a.'[5]" value="1" '.($this->login_model->canEdit($a,$perm)?'checked':'').'/></li>
+	    <td><input type="checkbox" name="'.$a.'[5]" value="1" '.($this->login_model->canEdit($a,$perm)?'checked':'').'/></td>
 	    ';
 		$return .= '
-	    <li><input type="checkbox" name="'.$a.'[6]" value="1" '.($this->login_model->canDelete($a,$perm)?'checked':'').'/></li>
+	    <td><input type="checkbox" name="'.$a.'[6]" value="1" '.($this->login_model->canDelete($a,$perm)?'checked':'').'/></td>
 	    ';
+	    $return .= '</tr>';
 	    }
-		$return .= '</ul>';
+		$return .= '</table>';
+		global $loginConfig;
+		if($loginConfig['Show Permission Management Tips'])
+			$return .= '<h5>ID Only is just if you want to restrict the user to see just the record that was created by him<br/>
+			How it works the GRID: Selected = YES | Deselected = NO<br/>
+			Tips: NEVER let the admin without the full permissions!<br/>
+			Tips 2: Give this page JUST to someone that know what he\'s doing!</h5>';
+
 		return $return;
 	}
 	function elaborate_the_grid_then_update($post_array, $primary_key=null) {
