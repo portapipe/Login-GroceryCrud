@@ -3,7 +3,7 @@ A Login/Logout system for any CodeIgniter project (like GroceryCrud that don't n
 > There are some tips and code strips into the [WIKI](https://github.com/portapipe/Login-GroceryCrud/wiki) so read it!
 > There is the [Official Website](https://portapipe.github.io/Login-GroceryCrud/) too!
 
-![alt tag](https://github.com/portapipe/Login-GroceryCrud/blob/master/login_page.png)
+![alt tag](https://github.com/portapipe/Login-GroceryCrud/blob/master/login_page.png?raw=true)
 ### Requirement
 - MySQL
 - CodeIgniter
@@ -31,7 +31,7 @@ You can create infinite groups. You have the ability to choose 'ID Only, Read Li
 
 There is a WIKI page with the instruction on how it works:
 https://github.com/portapipe/Login-GroceryCrud/wiki/Table-Permission-Management-(GRID)
-![alt tag](https://github.com/portapipe/Login-GroceryCrud/blob/master/permissions_management.png)
+![alt tag](https://github.com/portapipe/Login-GroceryCrud/blob/master/permissions_management.png?raw=true)
 
 If you want to create your custom user management system you can go here:
 https://github.com/portapipe/Login-GroceryCrud/wiki/Manage-the-users
