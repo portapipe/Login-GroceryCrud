@@ -1,5 +1,4 @@
 <?php
-
 class Login_model  extends CI_Model  {
 
 	public function __construct()
@@ -9,7 +8,6 @@ class Login_model  extends CI_Model  {
 		$this->load->helper('form');
 		$this->load->helper('url');
 		$this->load->library('session');
-		
 	}
 	
 	/* CHECK LOGIN, return BOOL */
@@ -24,35 +22,27 @@ class Login_model  extends CI_Model  {
 	public function permission(){
 		$data = json_decode($this->session->userdata('loginStatus'));
 		return $data->permissions;
-	}
-	public function permissions(){
-		return $this->permission();
-	}
-	public function getPermission(){
-		return $this->permission();
-	}
-	public function getPermissions(){
-		return $this->permission();
-	}
+	}/*aliases*/public function permissions(){return $this->permission();} public function getPermission(){return $this->permission();} public function getPermissions(){return $this->permission();}
 	
+	// Return the id of the current logged user
 	public function id(){
 		$data = json_decode($this->session->userdata('loginStatus'));
 		return $data->id;
 	}
+	
+	// Return the username of the current logged user
 	public function name(){
 		$data = json_decode($this->session->userdata('loginStatus'));
 		return $data->username;
-	}
-	public function username(){
-		return $this->name();
-	}
+	}/*aliases*/public function username(){return $this->name();}
 	
+	//Return the specified field into the crud_users database of the current logged user
 	public function getField($field){
 		return $this->db->query("SELECT $field FROM crud_users WHERE id = ".$this->id())->row()->$field;
 	}
 	
 	
-	/* LOGOUT */
+	/* LOGOUT the current user */
 	public function logout($redirect=true){
 		$this->session->sess_destroy();
 		if($redirect) redirect("/login");
@@ -60,13 +50,17 @@ class Login_model  extends CI_Model  {
 
 
 	/* FROM HERE THE PERMISSION MANAGEMENT SYSTEM */
+	/*             JUST GROCERYCRUD               */
+	// check the permission of a user for a specific action in a specific table
+	// return a boolean
 	public function extractPermission($what,$permission=false,$table=false){
 		/*
 		ID  RL  RS  A  E  D
 		x   x   x   x  x  x
 		*/
 		
-		if(!$permission){
+		
+		if($permission === false){
 			$query = $this->db->query("SELECT permissions FROM crud_permissions WHERE id = ".$this->permission());
 			$permission = json_decode($query->row()->permissions,true);
 			if(!$table){ echo "You need to pass a table to 'this->login_model->extractPermission()' as third parameter to use the current logged user permissions!";die;}
@@ -75,12 +69,20 @@ class Login_model  extends CI_Model  {
 			}else{
 				$permission = 100000;
 			}
+		}else{
+			if(is_array($permission) && isset($permission[$table])){
+				$permission = $permission[$table];
+			}else{
+				if(!is_numeric($permission)) $permission = 100000;
+			}
 		}
-		
 		$return = 0;
-		if($what == 1||$what == "ID"||$what=="idonly"){
-			if($permission[0]) $return = 0;
-			if(!$permission[0]) $return = 1;
+		if($what == "ID"||$what=="idonly"){
+			if($permission[0].""==""){
+				$return = 0;
+			}else{
+				$return = ($permission[0]?0:1);
+			}
 		}
 		if($what == 2||$what == "RL"||$what=="readlist") $return = $permission[1];
 		if($what == 3||$what == "RS"||$what=="readsingle") $return = $permission[2];
@@ -90,57 +92,33 @@ class Login_model  extends CI_Model  {
 		return $return;
 	}
 	
-	
-	public function IDOnly($table,$permission=000000){
-
-		if(is_array($permission) && isset($permission[$table])){
-			$permission = $permission[$table];
-		}
-		if(!is_numeric($permission)) $permission = 100000;
-		return $this->extractPermission("id",$permission);		
+	//Check if perm allow to see IDOnly or All
+	public function IDOnly($table,$permission=true){
+		return $this->extractPermission("ID",$permission,$table);		
+	}
+	//Check if perm allow to see grid list or not
+	public function canSeeList($table,$permission=true){
+		return $this->extractPermission("RL",$permission,$table);		
+	}
+	//Check if perm allow to see the single view of the records
+	public function canSeeSingle($table,$permission=true){
+		return $this->extractPermission("RS",$permission,$table);		
+	}
+	//Check if perm allow to add a record
+	public function canAdd($table,$permission=true){
+		return $this->extractPermission("A",$permission,$table);		
+	}
+	//Check if perm allow to edit a record
+	public function canEdit($table,$permission=true){
+		return $this->extractPermission("E",$permission,$table);		
+	}
+	//Check if perm allow to delete a record
+	public function canDelete($table,$permission=true){
+		return $this->extractPermission("D",$permission,$table);		
 	}
 	
-	public function canSeeList($table,$permission=000000){
-		if(is_array($permission) && isset($permission[$table])){
-			$permission = $permission[$table];
-		}
-		if(!is_numeric($permission)) $permission = 100000;
-		return $this->extractPermission("RL",$permission);		
-	}
-	public function canSeeSingle($table,$permission=000000){
-		if(is_array($permission) && isset($permission[$table])){
-			$permission = $permission[$table];
-		}
-		if(!is_numeric($permission)) $permission = 100000;
-		return $this->extractPermission("RS",$permission);		
-	}
-	public function canAdd($table,$permission=000000){
-		if(is_array($permission) && isset($permission[$table])){
-			$permission = $permission[$table];
-		}
-		if(!is_numeric($permission)) $permission = 100000;
-		return $this->extractPermission("A",$permission);		
-	}
-	public function canEdit($table,$permission=000000){
-		if(is_array($permission) && isset($permission[$table])){
-			$permission = $permission[$table];
-		}
-		if(!is_numeric($permission)) $permission = 100000;
-		return $this->extractPermission("E",$permission);		
-	}
-	public function canDelete($table,$permission=100000){
-		if(is_array($permission) && isset($permission[$table])){
-			$permission = $permission[$table];
-		}
-		if(!is_numeric($permission)) $permission = 100000;
-		return $this->extractPermission("D",$permission);		
-	}
-	
+	//The function that MUST be used to filter the CRUD table based on the permissions
 	public function check($crud,$author=false){
-		//print_r($crud->Grocery_CRUD);
-		//$state = (array) $crud;//$crud->basic_db_table;
-		//$state = serialize($state['basic_model']);//["*state_info"];
-		//$state = $crud;
 		$state = unserialize(
 			preg_replace(
 				'/^O:\d+:"[^"]++"/', 
