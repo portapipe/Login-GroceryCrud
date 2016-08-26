@@ -29,6 +29,8 @@
 There is the <a href="https://portapipe.github.io/Login-GroceryCrud/">Official Website</a> too!</p>
 </blockquote>
 
+<p><img src="https://github.com/portapipe/Login-GroceryCrud/blob/master/login_page.png?raw=true" alt="alt tag"></p>
+
 <h3>
 <a id="requirement" class="anchor" href="#requirement" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirement</h3>
 
@@ -64,9 +66,16 @@ you can look into the controllers/Login.php file because on the top of the file 
 The "permissions" field can store anything (VARCHAR 255) like a json_encode() array or just a keyword or a number, so you can manage the permissions of that user.</p>
 
 <h3>
-<a id="users-management---the-code" class="anchor" href="#users-management---the-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Users Management - The Code</h3>
+<a id="users-permissions-management" class="anchor" href="#users-permissions-management" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Users Permissions Management</h3>
 
-<p>Here it is the code on how to manage the users in your admin panel:
+<p>From V2.0 there is a complete and cool GRID Permissions Management for EACH table.
+You can create infinite groups. You have the ability to choose 'ID Only, Read List, Read Single, Add, Edit and Delete' permission for each table of your database.</p>
+
+<p>There is a WIKI page with the instruction on how it works:
+<a href="https://github.com/portapipe/Login-GroceryCrud/wiki/Table-Permission-Management-(GRID)">https://github.com/portapipe/Login-GroceryCrud/wiki/Table-Permission-Management-(GRID)</a>
+<img src="https://github.com/portapipe/Login-GroceryCrud/blob/master/permissions_management.png?raw=true" alt="alt tag"></p>
+
+<p>If you want to create your custom user management system you can go here:
 <a href="https://github.com/portapipe/Login-GroceryCrud/wiki/Manage-the-users">https://github.com/portapipe/Login-GroceryCrud/wiki/Manage-the-users</a></p>
 
 <h3>
@@ -99,7 +108,11 @@ The "permissions" field can store anything (VARCHAR 255) like a json_encode() ar
 <p>Pretty easy, uh?</p>
 
 <h3>
-<a id="example-permissions-for-grocerycrud" class="anchor" href="#example-permissions-for-grocerycrud" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example: Permissions for GroceryCrud</h3>
+<a id="example-self-made-custom-permissions-for-grocerycrud" class="anchor" href="#example-self-made-custom-permissions-for-grocerycrud" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example: Self-Made Custom Permissions for GroceryCrud</h3>
+
+<blockquote>
+<p>If you need a pre-made permissions system with full control of every permission take a look <a href="https://github.com/portapipe/Login-GroceryCrud/wiki/Table-Permission-Management-(GRID)">here</a></p>
+</blockquote>
 
 <h5>
 <a id="note-im-using-some-names-like-admin-or-author-for-the-example-but-you-can-use-really-anything-you-want" class="anchor" href="#note-im-using-some-names-like-admin-or-author-for-the-example-but-you-can-use-really-anything-you-want" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Note: I'm using some names like 'admin' or 'author' for the example but you can use really anything you want!</h5>
