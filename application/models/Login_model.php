@@ -58,9 +58,7 @@ class Login_model  extends CI_Model  {
 		ID  RL  RS  A  E  D
 		x   x   x   x  x  x
 		*/
-		
-		
-		if($permission === false){
+		if(is_bool($permission)){
 			$query = $this->db->query("SELECT permissions FROM crud_permissions WHERE id = ".$this->permission());
 			$permission = json_decode($query->row()->permissions,true);
 			if(!$table){ echo "You need to pass a table to 'this->login_model->extractPermission()' as third parameter to use the current logged user permissions!";die;}
