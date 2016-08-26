@@ -34,7 +34,7 @@ class Login extends CI_Controller {
 
 	}
 	
-	/* LOGIN PROCESS */
+	/* LOGIN PROCESS (not a page) */
 	function makeLogin() {
 		global $loginConfig;
 		
@@ -62,6 +62,8 @@ class Login extends CI_Controller {
 		redirect("/login");
 	}
 	
+	//If the crud_users table doesn't exists well...
+	//create the table ad add a 'admin'-'admin' user
 	function createDBTable(){
 		if ($this->db->table_exists('crud_users')){
 		    redirect(base_url()."login");
@@ -78,6 +80,10 @@ class Login extends CI_Controller {
 		}
 	}
 	
+	
+	// FROM HERE IT WORKS JUST WITH GROCERYCRUD !!!!!
+	
+	//Create the table for the permissions management
 	function createDBTableForPermissions(){
 		if (!$this->db->table_exists('crud_permissions')){
 			$this->db->query("CREATE TABLE crud_permissions (
@@ -86,7 +92,6 @@ class Login extends CI_Controller {
 				permissions TEXT
 			)");
 			/*
-			
 			
 			ID  RL  RS  A  E  D
 			x   x   x   x  x  x
@@ -111,11 +116,11 @@ class Login extends CI_Controller {
 			$dati = array("crud_permissions"=>"111111","crud_users"=>"111111");
 			$this->db->query("INSERT INTO crud_permissions (name,permissions) VALUES ('admin','".json_encode($dati)."')");
 			redirect($this->uri->uri_string());
-			
 		}
 	}
+	
 	//page to manage all the permissions
-	// IT WORKS JUST WITH GROCERYCRUD !!!!!
+	//Yes, this IS the page of the permissions
 	public function manage_permissions(){
 		if(!$this->login_model->isLogged()){ redirect(base_url()."login"); return;}
 		$this->createDBTableForPermissions();
@@ -132,8 +137,8 @@ class Login extends CI_Controller {
 		$crud->unset_read();
 
 		$crud->callback_field('permissions',array($this,'create_permissions_grid'));
-		$crud->callback_before_update(array($this,'elaborate_the_grid_then_update'));
 		$crud->callback_before_insert(array($this,'elaborate_the_grid_then_update'));
+		$crud->callback_before_update(array($this,'elaborate_the_grid_then_update'));
 		$crud = $this->login_model->check($crud);
 		$output = $crud->render();
 		
@@ -166,12 +171,12 @@ class Login extends CI_Controller {
 		<?		
 	}
 	
+	//This function create the GRID for all the tables with all the permissions
 	function create_permissions_grid($value='', $primary_key = null){
 		$perm = json_decode($value,true);
 		$return = '<table class="checkbox-grid">';
 		$arr = array("ID Only","Read List","Read Single","Add New","Edit","Delete");
 		$tables = $this->db->list_tables();
-
 		//ID
 		$return .= '
 		<tr><th>Tables</th>
@@ -186,9 +191,10 @@ class Login extends CI_Controller {
 		$return .= '<tr>
 	    <td>'.$a.'</td>
 	    ';
+
 		$return .= '
-	    <td><input type="checkbox" name="'.$a.'[1]" value="0" '.($this->login_model->IDOnly($a,$perm)?'checked':'').'/></td>
-	    ';
+		<td><input type="checkbox" name="'.$a.'[1]" value="0" '.($this->login_model->IDOnly($a,$perm)?'checked':'').'/></td>
+		';
 		$return .= '
 	    <td><input type="checkbox" name="'.$a.'[2]" value="1" '.($this->login_model->canSeeList($a,$perm)?'checked':'').'/></td>
 	    ';
@@ -216,11 +222,13 @@ class Login extends CI_Controller {
 
 		return $return;
 	}
+	
+	//Here the permission's array is created and converted to be saved on the database after saving/adding a new group
 	function elaborate_the_grid_then_update($post_array, $primary_key=null) {
 		foreach($post_array as $key=>$val){
 			if($key=="name") continue;
 			
-			if(!isset($post_array[$key][1])) $post_array[$key][1] = 0;
+			if(!isset($post_array[$key][1])) $post_array[$key][1] = 1;
 			if(!isset($post_array[$key][2])) $post_array[$key][2] = 0;
 			if(!isset($post_array[$key][3])) $post_array[$key][3] = 0;
 			if(!isset($post_array[$key][4])) $post_array[$key][4] = 0;
@@ -233,9 +241,6 @@ class Login extends CI_Controller {
 		$post_array = array("name"=>$post_array['name'],"permissions"=>json_encode($permissions));
 		 
 		return $post_array;
-	}
-	
+	}	
 }
-
-
 ?>
