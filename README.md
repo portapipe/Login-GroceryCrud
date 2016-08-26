@@ -24,8 +24,13 @@ That's it.
 It use an SQL table named "crud_users" with "username","password" and "permissions" fields. It will be created automagically if doesn't exists AND an admin user will be created too, so you can log in immediately!
 The "permissions" field can store anything (VARCHAR 255) like a json_encode() array or just a keyword or a number, so you can manage the permissions of that user.
 
-### Users Management - The Code
-Here it is the code on how to manage the users in your admin panel:
+### Users Permissions Management
+From V2.0 there is a complete and cool GRID Permissions Management for EACH table.
+You can create infinite groups. You have the ability to choose 'ID Only, Read List, Read Single, Add, Edit and Delete' permission for each table of your database.
+There is a WIKI page with the instruction on how it works:
+https://github.com/portapipe/Login-GroceryCrud/wiki/Table-Permission-Management-(GRID)
+
+If you want to create your custom user management system you can go here:
 https://github.com/portapipe/Login-GroceryCrud/wiki/Manage-the-users
 
 ### Advanced tools
@@ -55,7 +60,9 @@ if($this->login_model->isLogged()){
 Pretty easy, uh?
 
 
-### Example: Permissions for GroceryCrud
+### Example: Self-Made Custom Permissions for GroceryCrud
+> If you need a pre-made permissions system with full control of every permission take a look [here](https://github.com/portapipe/Login-GroceryCrud/wiki/Table-Permission-Management-(GRID))
+
 ##### Note: I'm using some names like 'admin' or 'author' for the example but you can use really anything you want!
 In this example you have a blog website. You need an "admin" user, an "author" user and a "revisioner" user.
 
