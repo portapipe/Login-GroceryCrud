@@ -47,7 +47,7 @@ A model file comes with the release and contains some basics stuff:
 
 TO USE IT you just need to load the library into your controllers files like that:
 ```php
-$this->load->model("Login_model");
+$this->load->model("login_model");
 ```
 and use it like:
 
