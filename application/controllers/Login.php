@@ -128,7 +128,6 @@ class Login extends CI_Controller {
 		$this->load->library('grocery_CRUD');
 		
 		$crud = new grocery_CRUD();
-		$crud->set_theme("bootstrap");
 		$crud->set_table('crud_permissions');
 		$crud->set_subject('Permission Management');
 		$crud->required_fields('name');
