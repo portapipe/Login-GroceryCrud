@@ -164,7 +164,7 @@ class Login extends CI_Controller {
 			</style>
 			</head>
 			<body>
-				<? echo $output->output; ?>
+				<?php echo $output->output; ?>
 			</body>
 		</html>
 		<?		
