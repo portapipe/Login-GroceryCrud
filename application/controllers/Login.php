@@ -167,7 +167,7 @@ class Login extends CI_Controller {
 				<?php echo $output->output; ?>
 			</body>
 		</html>
-		<?		
+		<?php
 	}
 	
 	//This function create the GRID for all the tables with all the permissions
