@@ -42,7 +42,10 @@ class Login extends CI_Controller {
 		$password = $this->input->post('password');
 		if($loginConfig['Use MD5 Encryption']) $password = md5($password);
 		
-		$query = $this->db->query("SELECT * FROM crud_users WHERE username='$username' AND password='$password'");
+       	$this->db->where("username",$username);
+        $this->db->where("password",$password);
+        $query = $this->db->get("crud_users");
+		
 		if ($query->num_rows() == 1) {
 			$name = $query->row()->username;
 			$permissions = (isset($query->row()->permissions)?$query->row()->permissions:"");
