@@ -22,7 +22,7 @@
 	          <h1 class="text-center">Login Page</h1>
 	      </div>
 	      <div class="modal-body">
-	          <form class="form col-md-12 center-block" action="<?=base_url();?>login/makeLogin" method="post">
+	          <form class="form col-md-12 center-block" action="<?php echo site_url('login/makeLogin')?>" method="post">
 	            <div class="form-group">
 	              <input type="text" name="username" class="form-control input-lg" placeholder="Username">
 	            </div>
